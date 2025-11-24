@@ -1,0 +1,89 @@
+# OpenAI Configuration
+openai:
+  api_key: ${OPENAI_API_KEY}
+  embedding_model: text-embedding-3-small
+  embedding_dimensions: 1536
+
+# Pinecone Configuration
+pinecone:
+  api_key: ${PINECONE_API_KEY}
+  environment: ${PINECONE_ENVIRONMENT}
+  index_name: docuquiz
+  dimension: 1536
+  metric: cosine
+  cloud: aws
+  region: us-east-1
+
+# Document Processing Configuration
+document_processing:
+  docs_folder: ./docs
+  supported_extensions:
+    - .txt
+    - .md
+    - .pdf
+  
+# Text Chunking Configuration
+chunking:
+  chunk_size: 1000
+  chunk_overlap: 200
+  separators:
+    - "\n\n"
+    - "\n"
+    - " "
+    - ""
+
+# Retrieval Configuration
+retrieval:
+  top_k: 5
+  score_threshold: 0.3  # Lowered for text-embedding-3-small (gives lower scores)
+
+# Agent Configuration
+agents:
+  retriever:
+    name: retriever_agent
+    description: Retrieves relevant document chunks from vector store
+  
+  reasoning:
+    name: reasoning_agent
+    description: Processes retrieved chunks and generates responses
+    model: gpt-4
+    temperature: 0.7
+    max_tokens: 2000
+  
+  # MCQ Generation Agents
+  mcq_generation:
+    model: gpt-4
+    temperature: 0.7
+    max_tokens: 3000
+    
+  mcq_critic:
+    model: gpt-4
+    temperature: 0.3
+    max_tokens: 2000
+  
+  mcq_validation:
+    min_quality_score: 7.0
+    min_grounding_score: 6.0
+
+# MCQ Generation Configuration
+mcq_generation:
+  default_num_mcqs: 5
+  default_difficulty: medium
+  min_context_chunks: 3
+  max_context_chunks: 10
+  
+# Prompt Templates
+prompts:
+  system_prompt: |
+    You are a helpful AI assistant with access to a knowledge base.
+    Use the provided context to answer questions accurately.
+  
+  retrieval_prompt: |
+    Based on the following context, answer the user's question.
+    
+    Context:
+    {context}
+    
+    Question: {question}
+    
+    Answer:
